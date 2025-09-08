@@ -1,0 +1,206 @@
+C:\Users\nizam>psql -U postgres -d postgres -h localhost -p 5432
+Password for user postgres:
+
+psql (17.6)
+WARNING: Console code page (437) differs from Windows code page (1252)
+         8-bit characters might not work correctly. See psql reference
+         page "Notes for Windows users" for details.
+Type "help" for help.
+
+postgres=# \c
+You are now connected to database "postgres" as user "postgres".
+postgres=# \c cookie;
+You are now connected to database "cookie" as user "postgres".
+cookie=# CREATE TABLE students (
+cookie(#     student_id INTEGER PRIMARY KEY,
+cookie(#     name VARCHAR(100),
+cookie(#     email VARCHAR(150)
+cookie(# );
+CREATE TABLE
+cookie=# SELECT * FROM students;
+ student_id | name | email
+------------+------+-------
+(0 rows)
+
+
+cookie=# DROP TABLE students;
+DROP TABLE
+cookie=# -- Define primary key at table level
+cookie=# CREATE TABLE students (
+cookie(#     student_id INTEGER,
+cookie(#     name VARCHAR(100),
+cookie(#     email VARCHAR(150),
+cookie(#     PRIMARY KEY (student_id)
+cookie(# );
+CREATE TABLE
+cookie=# DROP TABLE students;
+DROP TABLE
+cookie=# -- Define primary key with a custom name
+cookie=# CREATE TABLE students (
+cookie(#     student_id INTEGER,
+cookie(#     name VARCHAR(100),
+cookie(#     email VARCHAR(150),
+cookie(#     CONSTRAINT pk_students PRIMARY KEY (student_id)
+cookie(# );
+CREATE TABLE
+cookie=# SELECT * FROM students;
+ student_id | name | email
+------------+------+-------
+(0 rows)
+
+
+cookie=# -- Add primary key to existing table
+cookie=# ALTER TABLE students ADD CONSTRAINT pk_students PRIMARY KEY (student_id);
+ERROR:  character with byte sequence 0xd0 0x9e in encoding "UTF8" has no equivalent in encoding "WIN1252"
+cookie=# -- Add primary key to existing table
+cookie=# ALTER TABLE students ADD CONSTRAINT email_address PRIMARY KEY (email);
+ERROR:  character with byte sequence 0xd0 0x9e in encoding "UTF8" has no equivalent in encoding "WIN1252"
+cookie=# DROP TABLE students;
+DROP TABLE
+cookie=# CREATE TABLE students (
+cookie(#     student_id SERIAL PRIMARY KEY,
+cookie(#     name VARCHAR(100) NOT NULL,
+cookie(#     email VARCHAR(150) UNIQUE,
+cookie(#     faculty VARCHAR(50)
+cookie(# );
+CREATE TABLE
+cookie=#
+cookie=# -- Insert sample data
+cookie=# INSERT INTO students (name, email, faculty) VALUES
+cookie-# ('Alice Johnson', 'alice@alatoo.edu.kg', 'Computer Science'),
+cookie-# ('Bob Smith', 'bob@alatoo.edu.kg', 'Mathematics'),
+cookie-# ('Carol Davis', 'carol@alatoo.edu.kg', 'Computer Science');
+INSERT 0 3
+cookie=# SELECT * FROM students;
+ student_id |     name      |        email        |     faculty
+------------+---------------+---------------------+------------------
+          1 | Alice Johnson | alice@alatoo.edu.kg | Computer Science
+          2 | Bob Smith     | bob@alatoo.edu.kg   | Mathematics
+          3 | Carol Davis   | carol@alatoo.edu.kg | Computer Science
+(3 rows)
+
+
+cookie=# CREATE TABLE course_enrollments (
+cookie(#     student_id INTEGER,
+cookie(#     course_id INTEGER,
+cookie(#     semester VARCHAR(20),
+cookie(#     enrollment_date DATE DEFAULT CURRENT_DATE,
+cookie(#     grade CHAR(2),
+cookie(#     PRIMARY KEY (student_id, course_id, semester)
+cookie(# );
+CREATE TABLE
+cookie=# -- Insert sample data
+cookie=# INSERT INTO course_enrollments (student_id, course_id, semester, grade) VALUES
+cookie-# (1, 101, '2024-Spring', 'A'),
+cookie-# (1, 102, '2024-Spring', 'B+'),
+cookie-# (2, 101, '2024-Spring', 'A-'),
+cookie-# (1, 101, '2024-Fall', 'A+');  -- Same student can take same course in different semester
+INSERT 0 4
+cookie=# SELECT * FROM students;
+ student_id |     name      |        email        |     faculty
+------------+---------------+---------------------+------------------
+          1 | Alice Johnson | alice@alatoo.edu.kg | Computer Science
+          2 | Bob Smith     | bob@alatoo.edu.kg   | Mathematics
+          3 | Carol Davis   | carol@alatoo.edu.kg | Computer Science
+(3 rows)
+
+
+cookie=# SELECT * FROM course_enrollments;
+ student_id | course_id |  semester   | enrollment_date | grade
+------------+-----------+-------------+-----------------+-------
+          1 |       101 | 2024-Spring | 2025-09-08      | A
+          1 |       102 | 2024-Spring | 2025-09-08      | B+
+          2 |       101 | 2024-Spring | 2025-09-08      | A-
+          1 |       101 | 2024-Fall   | 2025-09-08      | A+
+(4 rows)
+
+
+cookie=# CREATE TABLE products (
+cookie(#     product_id SERIAL PRIMARY KEY,
+cookie(#     product_name VARCHAR(100) NOT NULL,
+cookie(#     price DECIMAL(10,2)
+cookie(# );
+CREATE TABLE
+cookie=#
+cookie=# -- SERIAL is equivalent to:
+cookie=# -- product_id INTEGER NOT NULL DEFAULT nextval('products_product_id_seq'),
+cookie=# -- where products_product_id_seq is an automatically created sequence
+cookie=# CREATE TABLE transactions (
+cookie(# transaction_id BIGSERIAL PRIMARY KEY,  -- Can handle very large numbers
+cookie(# amount DECIMAL(15,2),
+cookie(#  transaction_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+cookie(# );
+CREATE TABLE
+cookie=# \d products;
+                                           Table "public.products"
+    Column    |          Type          | Collation | Nullable |                   Default
+--------------+------------------------+-----------+----------+----------------------------------------------
+ product_id   | integer                |           | not null | nextval('products_product_id_seq'::regclass)
+ product_name | character varying(100) |           | not null |
+ price        | numeric(10,2)          |           |          |
+Indexes:
+    "products_pkey" PRIMARY KEY, btree (product_id)
+
+
+cookie=# SELECT * FROM products;
+ product_id | product_name | price
+------------+--------------+-------
+(0 rows)
+
+
+cookie=# -- IDENTITY ALWAYS - PostgreSQL controls the value completely
+cookie=# CREATE TABLE orders (
+cookie(#     order_id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+cookie(#     customer_name VARCHAR(100),
+cookie(#     order_date DATE DEFAULT CURRENT_DATE
+cookie(# );
+CREATE TABLE
+cookie=#
+cookie=# -- IDENTITY BY DEFAULT - Allows manual insertion but auto-generates if not provided
+cookie=# CREATE TABLE customers (
+cookie(#     customer_id INTEGER GENERATED BY DEFAULT AS IDENTITY PRIMARY KEY,
+cookie(#     customer_name VARCHAR(100),
+cookie(#     email VARCHAR(150)
+cookie(# );
+CREATE TABLE
+cookie=#
+cookie=# -- You can still insert specific values with BY DEFAULT
+cookie=# INSERT INTO customers (customer_id, customer_name, email)
+cookie-# VALUES (1000, 'VIP Customer', 'vip@example.com');
+INSERT 0 1
+cookie=# CREATE TABLE departments (
+cookie(#     dept_id INTEGER PRIMARY KEY,
+cookie(#     dept_name VARCHAR(100)
+cookie(# );
+CREATE TABLE
+cookie=#
+cookie=# -- This will fail due to duplicate primary key
+cookie=# INSERT INTO departments VALUES (1, 'Computer Science');
+INSERT 0 1
+cookie=# INSERT INTO departments VALUES (1, 'Mathematics'); -- ERROR: duplicate key value
+ERROR:  character with byte sequence 0xd0 0x9e in encoding "UTF8" has no equivalent in encoding "WIN1252"
+cookie=#
+cookie=# -- This will fail because primary key cannot be NULL
+cookie=# INSERT INTO departments VALUES (NULL, 'Physics'); -- ERROR: null value in column "dept_id"
+ERROR:  character with byte sequence 0xd0 0x9e in encoding "UTF8" has no equivalent in encoding "WIN1252"
+cookie=#
+cookie=# \d
+                       List of relations
+ Schema |              Name               |   Type   |  Owner
+--------+---------------------------------+----------+----------
+ public | course_enrollments              | table    | postgres
+ public | customers                       | table    | postgres
+ public | customers_customer_id_seq       | sequence | postgres
+ public | departments                     | table    | postgres
+ public | orders                          | table    | postgres
+ public | orders_order_id_seq             | sequence | postgres
+ public | products                        | table    | postgres
+ public | products_product_id_seq         | sequence | postgres
+ public | students                        | table    | postgres
+ public | students_student_id_seq         | sequence | postgres
+ public | transactions                    | table    | postgres
+ public | transactions_transaction_id_seq | sequence | postgres
+(12 rows)
+
+
+cookie=# \q
