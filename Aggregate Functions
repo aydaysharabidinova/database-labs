@@ -1,0 +1,369 @@
+Windows PowerShell
+Copyright (C) Microsoft Corporation. All rights reserved.
+
+Install the latest PowerShell for new features and improvements! https://aka.ms/PSWindows
+
+PS C:\Users\nizam> cd "C:\Program Files\PostgreSQL\17\bin"
+PS C:\Program Files\PostgreSQL\17\bin> psql -U postgres
+Password for user postgres:
+
+psql (17.6)
+WARNING: Console code page (437) differs from Windows code page (1252)
+         8-bit characters might not work correctly. See psql reference
+         page "Notes for Windows users" for details.
+Type "help" for help.
+
+postgres=# CREATE TABLE employees (
+postgres(#     id SERIAL PRIMARY KEY,
+postgres(#     first_name VARCHAR(50),
+postgres(#     last_name VARCHAR(50),
+postgres(#     department VARCHAR(50),
+postgres(#     salary NUMERIC(10,2),
+postgres(#     age INT,
+postgres(#     bonus NUMERIC(10,2),
+postgres(#     hire_date DATE,
+postgres(#     experience_years INT,
+postgres(#     email VARCHAR(100)
+postgres(# );
+CREATE TABLE
+postgres=# CREATE TABLE products (
+postgres(#     product_id SERIAL PRIMARY KEY,
+postgres(#     product_name VARCHAR(100),
+postgres(#     category VARCHAR(50),
+postgres(#     price NUMERIC(10,2)
+postgres(# );
+CREATE TABLE
+postgres=# CREATE TABLE products (
+postgres(#     product_id SERIAL PRIMARY KEY,
+postgres(#     product_name VARCHAR(100),
+postgres(#     category VARCHAR(50),
+postgres(#     price NUMERIC(10,2)
+postgres(# );
+ERROR:  character with byte sequence 0xd0 0x9e in encoding "UTF8" has no equivalent in encoding "WIN1252"
+postgres=# CREATE TABLE product_reviews (
+postgres(#     review_id SERIAL PRIMARY KEY,
+postgres(#     product_id INT REFERENCES products(product_id),
+postgres(#     rating NUMERIC(2,1),
+postgres(#     review_text TEXT
+postgres(# );
+CREATE TABLE
+postgres=# CREATE TABLE sales_data (
+postgres(#     sale_id SERIAL PRIMARY KEY,
+postgres(#     department VARCHAR(50),
+postgres(#     sales_amount NUMERIC(10,2)
+postgres(# );
+CREATE TABLE
+postgres=# CREATE TABLE employee_skills (
+postgres(#     id SERIAL PRIMARY KEY,
+postgres(#     employee_id INT REFERENCES employees(id),
+postgres(#     skill_name VARCHAR(50)
+postgres(# );
+CREATE TABLE
+postgres=# INSERT INTO employees (first_name, last_name, department, salary, age, bonus, hire_date, experience_years, email)
+postgres-# VALUES
+postgres-# ('Alice', 'Kim', 'Engineering', 95000, 28, 5000, '2022-05-12', 5, 'alice@company.com'),
+postgres-# ('Bob', 'Lee', 'Engineering', 120000, 35, 8000, '2018-03-21', 10, 'bob@company.com'),
+postgres-# ('Charlie', 'Smith', 'Sales', 70000, 30, 4000, '2020-08-15', 6, 'charlie@company.com'),
+postgres-# ('Diana', 'Wong', 'HR', 60000, 41, 3000, '2017-02-10', 12, 'diana@company.com'),
+postgres-# ('Eve', 'Jones', 'Sales', 80000, 26, NULL, '2023-01-11', 3, NULL);
+INSERT 0 5
+postgres=# INSERT INTO products (product_name, category, price)
+postgres-# VALUES
+postgres-# ('Apple', 'Fruit', 25.00),
+postgres-# ('Banana', 'Fruit', 15.00),
+postgres-# ('Strawberry', 'Berry', 50.00),
+postgres-# ('Blueberry', 'Berry', 45.00);
+INSERT 0 4
+postgres=# INSERT INTO product_reviews (product_id, rating)
+postgres-# VALUES
+postgres-# (1, 4.5),
+postgres-# (2, 3.8),
+postgres-# (3, 4.9),
+postgres-# (3, 4.6),
+postgres-# (4, 4.7);
+INSERT 0 5
+postgres=# INSERT INTO sales_data (department, sales_amount)
+postgres-# VALUES
+postgres-# ('Engineering', 120000),
+postgres-# ('Sales', 80000),
+postgres-# ('HR', 50000),
+postgres-# ('Sales', 95000);
+INSERT 0 4
+postgres=# INSERT INTO employee_skills (employee_id, skill_name)
+postgres-# VALUES
+postgres-# (1, 'Kotlin'),
+postgres-# (1, 'SQL'),
+postgres-# (2, 'Java'),
+postgres-# (2, 'AWS'),
+postgres-# (3, 'Negotiation'),
+postgres-# (3, 'Presentation');
+INSERT 0 6
+postgres=# SELECT COUNT(*) AS total_employees
+postgres-# FROM employees;
+ total_employees
+-----------------
+               5
+(1 row)
+
+
+postgres=# SELECT COUNT(email) AS employees_with_email
+postgres-# FROM employees;
+ employees_with_email
+----------------------
+                    4
+(1 row)
+
+
+postgres=# SELECT COUNT(DISTINCT department) AS unique_departments
+postgres-# FROM employees;
+ unique_departments
+--------------------
+                  3
+(1 row)
+
+
+postgres=# SELECT SUM(salary) AS total_salaries
+postgres-# FROM employees;
+ total_salaries
+----------------
+      425000.00
+(1 row)
+
+
+postgres=# SELECT department, SUM(sales_amount) AS total_sales
+postgres-# FROM sales_data
+postgres-# GROUP BY department;
+ department  | total_sales
+-------------+-------------
+ Engineering |   120000.00
+ Sales       |   175000.00
+ HR          |    50000.00
+(3 rows)
+
+
+postgres=# SELECT AVG(salary) AS average_salary
+postgres-# FROM employees;
+   average_salary
+--------------------
+ 85000.000000000000
+(1 row)
+
+
+postgres=# SELECT department, AVG(age) AS avg_age
+postgres-# FROM employees
+postgres-# GROUP BY department;
+ department  |       avg_age
+-------------+---------------------
+ Engineering | 31.5000000000000000
+ Sales       | 28.0000000000000000
+ HR          | 41.0000000000000000
+(3 rows)
+
+
+postgres=# SELECT
+postgres-#     MAX(salary) AS highest_salary,
+postgres-#     MIN(salary) AS lowest_salary
+postgres-# FROM employees;
+ highest_salary | lowest_salary
+----------------+---------------
+      120000.00 |      60000.00
+(1 row)
+
+
+postgres=# SELECT department, MAX(hire_date) AS latest_hire
+postgres-# FROM employees
+postgres-# GROUP BY department;
+ department  | latest_hire
+-------------+-------------
+ Engineering | 2022-05-12
+ Sales       | 2023-01-11
+ HR          | 2017-02-10
+(3 rows)
+
+
+postgres=# SELECT department, STRING_AGG(first_name, ', ') AS employee_names
+postgres-# FROM employees
+postgres-# GROUP BY department;
+ department  | employee_names
+-------------+----------------
+ Engineering | Alice, Bob
+ Sales       | Charlie, Eve
+ HR          | Diana
+(3 rows)
+
+
+postgres=#
+postgres=# SELECT employee_id, STRING_AGG(skill_name, ', ' ORDER BY skill_name) AS skills
+postgres-# FROM employee_skills
+postgres-# GROUP BY employee_id;
+ employee_id |          skills
+-------------+---------------------------
+           1 | Kotlin, SQL
+           2 | AWS, Java
+           3 | Negotiation, Presentation
+(3 rows)
+
+
+postgres=# SELECT department, ARRAY_AGG(salary) AS salary_array
+postgres-# FROM employees
+postgres-# GROUP BY department;
+ department  |     salary_array
+-------------+----------------------
+ Engineering | {95000.00,120000.00}
+ Sales       | {70000.00,80000.00}
+ HR          | {60000.00}
+(3 rows)
+
+
+postgres=# SELECT department, ARRAY_AGG(first_name ORDER BY last_name) AS employees
+postgres-# FROM employees
+postgres-# GROUP BY department;
+ department  |   employees
+-------------+---------------
+ Engineering | {Alice,Bob}
+ HR          | {Diana}
+ Sales       | {Eve,Charlie}
+(3 rows)
+
+
+postgres=# SELECT
+postgres-#     department,
+postgres-#     STDDEV(salary) AS salary_std_dev,
+postgres-#     VARIANCE(salary) AS salary_variance
+postgres-# FROM employees
+postgres-# GROUP BY department;
+ department  |  salary_std_dev   |    salary_variance
+-------------+-------------------+-----------------------
+ Engineering |    17677.66952966 |    312500000.00000000
+ Sales       | 7071.067811865475 | 50000000.000000000000
+ HR          |                   |
+(3 rows)
+
+
+postgres=# SELECT CORR(experience_years, salary) AS experience_salary_correlation
+postgres-# FROM employees;
+ experience_salary_correlation
+-------------------------------
+         -0.014400195383176448
+(1 row)
+
+
+postgres=# SELECT
+postgres-#     category,
+postgres-#     COUNT(*) AS number_of_products,
+postgres-#     SUM(price) AS total_value,
+postgres-#     AVG(price) AS average_price
+postgres-# FROM products
+postgres-# GROUP BY category;
+ category | number_of_products | total_value |    average_price
+----------+--------------------+-------------+---------------------
+ Berry    |                  2 |       95.00 | 47.5000000000000000
+ Fruit    |                  2 |       40.00 | 20.0000000000000000
+(2 rows)
+
+
+postgres=# SELECT
+postgres-#     EXTRACT(YEAR FROM sale_date) AS year,
+postgres-#     EXTRACT(QUARTER FROM sale_date) AS quarter,
+postgres-#     COUNT(*) AS total_sales,
+postgres-#     SUM(amount) AS total_revenue
+postgres-# FROM sales
+postgres-# GROUP BY EXTRACT(YEAR FROM sale_date), EXTRACT(QUARTER FROM sale_date)
+postgres-# ORDER BY year, quarter;
+ERROR:  character with byte sequence 0xd0 0x9e in encoding "UTF8" has no equivalent in encoding "WIN1252"
+postgres=# SELECT
+postgres-#     EXTRACT(YEAR FROM sale_date) AS year,
+postgres-#     EXTRACT(QUARTER FROM sale_date) AS quarter,
+postgres-#     COUNT(*) AS total_sales,
+postgres-#     SUM(amount) AS total_revenue
+postgres-# FROM sales
+postgres-# GROUP BY EXTRACT(YEAR FROM sale_date), EXTRACT(QUARTER FROM sale_date)
+postgres-# ORDER BY year, quarter;
+ERROR:  character with byte sequence 0xd0 0x9e in encoding "UTF8" has no equivalent in encoding "WIN1252"
+postgres=# SELECT
+postgres-#     CASE
+postgres-#         WHEN age < 30 THEN 'Under 30'
+postgres-#         WHEN age BETWEEN 30 AND 50 THEN '30-50'
+postgres-#         ELSE 'Over 50'
+postgres-#     END AS age_group,
+postgres-#     COUNT(*) AS employee_count,
+postgres-#     AVG(salary) AS avg_salary
+postgres-# FROM employees
+postgres-# GROUP BY
+postgres-#     CASE
+postgres-#         WHEN age < 30 THEN 'Under 30'
+postgres-#         WHEN age BETWEEN 30 AND 50 THEN '30-50'
+postgres-#         ELSE 'Over 50'
+postgres-#     END;
+ age_group | employee_count |     avg_salary
+-----------+----------------+--------------------
+ Under 30  |              2 | 87500.000000000000
+ 30-50     |              3 | 83333.333333333333
+(2 rows)
+
+
+postgres=# SELECT
+postgres-#     department,
+postgres-#     COUNT(*) AS employee_count
+postgres-# FROM employees
+postgres-# GROUP BY department
+postgres-# HAVING COUNT(*) > 5;
+ department | employee_count
+------------+----------------
+(0 rows)
+
+
+postgres=# SELECT
+postgres-#     product_id,
+postgres-#     AVG(rating) AS avg_rating,
+postgres-#     COUNT(*) AS review_count
+postgres-# FROM product_reviews
+postgres-# GROUP BY product_id
+postgres-# HAVING AVG(rating) > 4.0 AND COUNT(*) >= 10;
+ product_id | avg_rating | review_count
+------------+------------+--------------
+(0 rows)
+
+
+postgres=# SELECT department, AVG(salary) AS dept_avg_salary
+postgres-# FROM employees
+postgres-# GROUP BY department;
+ department  |   dept_avg_salary
+-------------+---------------------
+ Engineering | 107500.000000000000
+ Sales       |  75000.000000000000
+ HR          |  60000.000000000000
+(3 rows)
+
+
+postgres=# SELECT
+postgres-#     employee_id,
+postgres-#     first_name,
+postgres-#     department,
+postgres-#     salary,
+postgres-#     AVG(salary) OVER (PARTITION BY department) AS dept_avg_salary
+postgres-# FROM employees;
+ERROR:  character with byte sequence 0xd0 0x9e in encoding "UTF8" has no equivalent in encoding "WIN1252"
+postgres=# SELECT
+postgres-#     COUNT(*) AS total_rows,
+postgres-#     COUNT(email) AS non_null_emails,
+postgres-#     COUNT(*) - COUNT(email) AS null_emails
+postgres-# FROM employees;
+ total_rows | non_null_emails | null_emails
+------------+-----------------+-------------
+          5 |               4 |           1
+(1 row)
+
+
+postgres=# SELECT
+postgres-#     SUM(bonus) AS total_bonus,        -- NULLs ignored
+postgres-#     AVG(bonus) AS avg_bonus,          -- NULLs ignored
+postgres-#     COUNT(bonus) AS employees_with_bonus
+postgres-# FROM employees;
+ total_bonus |       avg_bonus       | employees_with_bonus
+-------------+-----------------------+----------------------
+    20000.00 | 5000.0000000000000000 |                    4
+(1 row)
+
+
+postgres=#
