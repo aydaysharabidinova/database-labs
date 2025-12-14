@@ -148,7 +148,7 @@ WHERE (SELECT COUNT(*) FROM Appointments WHERE CounselorID = C.CounselorID) >
 1. **Clone the repository**
 ```bash
 git clone https://github.com/aydaysharabidinova/database-labs.git
-cd mental_health_counseling_db
+cd mental_health_db
 ```
 
 2. **Install dependencies**
@@ -158,12 +158,12 @@ pip install -r requirements.txt
 
 3. **Create database schema**
 ```bash
-psql -U postgres -d your_database -f database/schema.sql
+psql -U postgres -d mental_health_db -f database/schema.sql
 ```
 
 4. **Load sample data (optional)**
 ```bash
-psql -U postgres -d your_database -f database/sample_data.sql
+psql -U postgres -d mental_health_db -f database/sample_data.sql
 ```
 
 5. **Run the application**
@@ -174,16 +174,6 @@ python app.py
 6. **Access the application**
 Open your browser and navigate to: `http://127.0.0.1:5000`
 
-## 📸 Screenshots
-
-### Dashboard
-![Dashboard](static/screenshots/dashboard.png)
-
-### Patient Management
-![Patients](static/screenshots/patients.png)
-
-### Reports & Analytics
-![Reports](static/screenshots/reports.png)
 
 ## 📚 Database Concepts Demonstrated
 
@@ -231,24 +221,10 @@ This project demonstrates understanding of:
 
 This is an academic project for Database Course. Feedback and suggestions are welcome!
 
-## 👨‍💻 Author
-
-**Your Name**
-- Student ID: [Your ID]
-- Course: Database Management Systems
-- Institution: [Your University]
-- Year: 2024
 
 ## 📄 License
 
 This project is created for educational purposes.
 
-## 🙏 Acknowledgments
-
-- Course Instructor: [Instructor Name]
-- Database textbook references
-- Flask and SQLAlchemy documentation
-
----
-
 **Note**: This project was developed as part of the Database Management Systems course final project.
+
