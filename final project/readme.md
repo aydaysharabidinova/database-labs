@@ -1,5 +1,8 @@
 # Mental Health Counseling Service - Database Management System
 
+Link to presentation:
+https://www.canva.com/design/DAG7o5JCPa8/WHmdrU2B7PEHjK-4UB_McQ/edit?utm_content=DAG7o5JCPa8&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton
+
 A comprehensive database management system for mental health counseling services, built with Flask and PostgreSQL. This project demonstrates advanced database concepts including complex queries, joins, aggregations, indexes, and constraints.
 
 ## 🎯 Project Overview
@@ -227,4 +230,5 @@ This is an academic project for Database Course. Feedback and suggestions are we
 This project is created for educational purposes.
 
 **Note**: This project was developed as part of the Database Management Systems course final project.
+
 
